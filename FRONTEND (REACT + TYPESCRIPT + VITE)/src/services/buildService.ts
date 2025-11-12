@@ -2,7 +2,7 @@ import api from './api';
 
 // ✅ Interface alinhada com BuildRequestDTO do backend
 export interface BuildSaveRequest {
-  nome_build: string;           // snake_case (backend)
+  nome_build: string;
   id_cpu: number;
   id_placamae: number;
   id_gpu: number | null;
@@ -11,9 +11,9 @@ export interface BuildSaveRequest {
   id_fonte: number;
   id_gabinete: number;
   id_refrigeracao: number | null;
-  uso_principal: string;        // "Jogos", "Trabalho", "Estudos"
+  uso_principal: string;
   detalhe: string;
-  orcamento: string;            // "econômico", "intermediário", etc.
+  orcamento: string;
 }
 
 // ✅ ComponenteDTO interno (resposta do backend)
@@ -47,24 +47,24 @@ export interface BuildResponse {
 export const buildService = {
   // ✅ POST /api/builds/save
   async saveBuild(data: BuildSaveRequest): Promise<BuildResponse> {
-    const response = await api.post<BuildResponse>('/builds/save', data);
+    const response = await api.post<BuildResponse>('/api/builds/save', data); // ✅ CORRIGIDO
     return response.data;
   },
 
   // ✅ GET /api/builds/my-builds
   async getMyBuilds(): Promise<BuildResponse[]> {
-    const response = await api.get<BuildResponse[]>('/builds/my-builds');
+    const response = await api.get<BuildResponse[]>('/api/builds/my-builds'); // ✅ CORRIGIDO
     return response.data;
   },
 
   // ✅ GET /api/builds/{id}
   async getBuildById(id: number): Promise<BuildResponse> {
-    const response = await api.get<BuildResponse>(`/builds/${id}`);
+    const response = await api.get<BuildResponse>(`/api/builds/${id}`); // ✅ CORRIGIDO
     return response.data;
   },
 
   // ✅ DELETE /api/builds/{id}
   async deleteBuild(id: number): Promise<void> {
-    await api.delete(`/builds/${id}`);
+    await api.delete(`/api/builds/${id}`); // ✅ CORRIGIDO
   }
 };
