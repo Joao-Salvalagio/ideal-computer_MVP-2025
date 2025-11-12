@@ -1,70 +1,97 @@
+/* ========================================
+   CONTAINER PRINCIPAL
+   ======================================== */
 .container {
-  min-height: 100vh;
+  min-height: calc(100vh - 70px);
   padding: 2rem;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-  color: #f1f5f9;
+  background: var(--bg-primary);
+  color: var(--text-primary);
 }
 
+/* ========================================
+   HEADER
+   ======================================== */
 .header {
   text-align: center;
   margin-bottom: 3rem;
+  animation: fadeInUp 0.6s ease;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .badge {
   display: inline-block;
-  background: linear-gradient(135deg, #3b82f6 0%, #6366f1 100%);
+  background: linear-gradient(135deg, var(--accent), #0099cc);
   color: white;
   padding: 0.5rem 1.5rem;
   border-radius: 50px;
   font-size: 0.9rem;
   font-weight: 600;
   margin-bottom: 1rem;
+  box-shadow: 0 4px 16px rgba(0, 212, 255, 0.3);
 }
 
 .header h1 {
   font-size: 2.5rem;
   font-weight: 700;
   margin: 1rem 0 0.5rem;
-  background: linear-gradient(135deg, #60a5fa 0%, #a78bfa 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--text-primary);
+  line-height: 1.2;
 }
 
 .subtitle {
   font-size: 1.1rem;
-  color: #cbd5e1;
+  color: var(--text-secondary);
+  margin: 0;
 }
 
+/* ========================================
+   CARD PRINCIPAL
+   ======================================== */
 .buildCard {
-  background: rgba(30, 41, 59, 0.6);
-  backdrop-filter: blur(10px);
-  border-radius: 20px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 1.5rem;
   padding: 2rem;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
-  border: 1px solid rgba(148, 163, 184, 0.1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  margin-bottom: 2rem;
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 /* ========================================
    TABELA DE COMPONENTES
    ======================================== */
-
 .tableContainer {
   overflow-x: auto;
   margin-bottom: 2rem;
-  border-radius: 12px;
+  border-radius: 1rem;
 }
 
 .componentsTable {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  border-radius: 12px;
+  border-radius: 1rem;
   overflow: hidden;
 }
 
+/* Cabeçalho da tabela */
 .componentsTable thead {
-  background: linear-gradient(135deg, #1e40af 0%, #6366f1 100%);
+  background: linear-gradient(135deg, var(--accent), #0099cc);
 }
 
 .componentsTable th {
@@ -77,62 +104,66 @@
   color: white;
 }
 
+/* Corpo da tabela */
 .componentsTable tbody tr {
-  background: rgba(30, 41, 59, 0.4);
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border);
   transition: all 0.3s ease;
 }
 
 .componentsTable tbody tr:hover {
-  background: rgba(59, 130, 246, 0.1);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
+  background: var(--bg-card);
+  transform: translateX(4px);
 }
 
 .componentsTable td {
   padding: 1rem;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
-  color: #e2e8f0;
+  color: var(--text-primary);
 }
 
+/* Células específicas */
 .typeCell {
   font-weight: 600;
-  color: #60a5fa;
+  color: var(--accent);
 }
 
 .nameCell {
   font-weight: 500;
+  color: var(--text-primary);
 }
 
 .specsCell {
   font-size: 0.9rem;
-  color: #cbd5e1;
+  color: var(--text-secondary);
 }
 
 .priceCell {
   font-weight: 600;
-  color: #34d399;
+  color: var(--accent);
   text-align: right;
 }
 
+/* Linha vazia */
 .emptyRow td {
-  color: #64748b;
+  color: var(--text-secondary);
   font-style: italic;
 }
 
 .notApplicable {
   text-align: center;
+  color: var(--text-secondary);
 }
 
-/* Footer da tabela */
-.totalRow {
-  background: linear-gradient(135deg, #1e40af 0%, #6366f1 100%);
-  font-weight: 700;
+/* Footer da tabela (Total) */
+.componentsTable tfoot {
+  background: linear-gradient(135deg, var(--accent), #0099cc);
 }
 
 .totalRow td {
   border: none;
   color: white;
-  padding: 1.2rem;
+  padding: 1.2rem 1rem;
+  font-weight: 700;
 }
 
 .totalLabel {
@@ -149,44 +180,51 @@
 /* ========================================
    SEÇÃO DE AÇÕES
    ======================================== */
-
 .actionsSection {
-  background: rgba(15, 23, 42, 0.4);
-  border-radius: 12px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 1.5rem;
   padding: 2rem;
-  border: 1px solid rgba(148, 163, 184, 0.1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
 .actionsSection h3 {
   font-size: 1.5rem;
   font-weight: 600;
-  margin-bottom: 1rem;
-  color: #f1f5f9;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
 }
 
+/* Info do usuário logado */
 .userInfo {
   margin-bottom: 1.5rem;
   padding: 1rem;
-  background: rgba(59, 130, 246, 0.1);
-  border-radius: 8px;
-  border-left: 4px solid #3b82f6;
-  color: #cbd5e1;
+  background: var(--bg-secondary);
+  border-radius: 0.75rem;
+  border-left: 4px solid var(--accent);
+  color: var(--text-secondary);
 }
 
 .userInfo strong {
-  color: #60a5fa;
+  color: var(--accent);
 }
 
+/* Prompt de login */
 .loginPrompt {
   margin-bottom: 1.5rem;
   padding: 1rem;
   background: rgba(245, 158, 11, 0.1);
-  border-radius: 8px;
+  border-radius: 0.75rem;
   border-left: 4px solid #f59e0b;
-  color: #fbbf24;
+  color: var(--text-primary);
   font-size: 1rem;
 }
 
+.loginPrompt strong {
+  color: #f59e0b;
+}
+
+/* Grid de botões */
 .buttonGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -196,14 +234,13 @@
 /* ========================================
    BOTÕES
    ======================================== */
-
 .saveButton,
 .exportButton,
 .loginButton,
 .registerButton,
 .secondaryButton {
   padding: 1rem 2rem;
-  border-radius: 12px;
+  border-radius: 0.75rem;
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
@@ -215,74 +252,90 @@
   gap: 0.5rem;
 }
 
+/* Botão Salvar */
 .saveButton {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: linear-gradient(135deg, #10b981, #059669);
   color: white;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
 }
 
 .saveButton:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.4);
 }
 
 .saveButton:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
+  transform: none;
 }
 
+/* Botão Exportar PDF */
 .exportButton {
-  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  background: linear-gradient(135deg, var(--accent), #0099cc);
   color: white;
+  box-shadow: 0 4px 16px rgba(0, 212, 255, 0.3);
 }
 
-.exportButton:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
+.exportButton:hover:not(:disabled) {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 212, 255, 0.4);
 }
 
+.exportButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Botão Login */
 .loginButton {
-  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
   color: white;
+  box-shadow: 0 4px 16px rgba(139, 92, 246, 0.3);
 }
 
 .loginButton:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(139, 92, 246, 0.4);
 }
 
+/* Botão Registro */
 .registerButton {
-  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  background: linear-gradient(135deg, #f59e0b, #d97706);
   color: white;
+  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.3);
 }
 
 .registerButton:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(245, 158, 11, 0.3);
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.4);
 }
 
+/* Botão Secundário */
 .secondaryButton {
-  background: rgba(148, 163, 184, 0.1);
-  color: #cbd5e1;
-  border: 1px solid rgba(148, 163, 184, 0.2);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 2px solid var(--border);
 }
 
 .secondaryButton:hover {
-  background: rgba(148, 163, 184, 0.2);
-  border-color: rgba(148, 163, 184, 0.4);
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-2px);
 }
 
 /* ========================================
    ALERTA DE SUCESSO
    ======================================== */
-
 .successAlert {
   position: fixed;
   top: 2rem;
   right: 2rem;
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: linear-gradient(135deg, #10b981, #059669);
   color: white;
   padding: 1rem 2rem;
-  border-radius: 12px;
+  border-radius: 0.75rem;
   font-weight: 600;
   box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
   animation: slideInRight 0.3s ease;
@@ -303,7 +356,6 @@
 /* ========================================
    RESPONSIVO
    ======================================== */
-
 @media (max-width: 768px) {
   .container {
     padding: 1rem;
@@ -313,8 +365,9 @@
     font-size: 1.8rem;
   }
 
-  .buildCard {
-    padding: 1rem;
+  .buildCard,
+  .actionsSection {
+    padding: 1.5rem;
   }
 
   .buttonGrid {
@@ -336,3 +389,11 @@
     left: 1rem;
   }
 }
+
+/* ========================================
+   MODO CLARO/ESCURO (CLASSES)
+   ======================================== */
+
+/* As variáveis CSS (--bg-primary, --text-primary, etc.) 
+   já mudam automaticamente com o ThemeContext,
+   então não precisa de classes .dark e .light aqui! */
