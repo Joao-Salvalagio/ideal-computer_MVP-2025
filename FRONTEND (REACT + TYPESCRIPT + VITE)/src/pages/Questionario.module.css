@@ -28,6 +28,99 @@
   }
 }
 
+/* ===========================
+   STEPPER (BARRA DE PROGRESSO)
+   =========================== */
+.stepper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 3rem;
+  padding: 0 2rem;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  position: relative;
+  z-index: 2;
+}
+
+.stepNumber {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: var(--bg-secondary);
+  border: 3px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  transition: all 0.4s ease;
+}
+
+.stepLabel {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+/* Estado ATIVO (etapa atual) */
+.step.active .stepNumber {
+  background: linear-gradient(135deg, var(--accent), #0099cc);
+  border-color: var(--accent);
+  color: white;
+  box-shadow: 0 4px 16px rgba(0, 212, 255, 0.4);
+  transform: scale(1.1);
+}
+
+.step.active .stepLabel {
+  color: var(--accent);
+}
+
+/* Estado COMPLETO (etapas anteriores) */
+.step.completed .stepNumber {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+}
+
+.step.completed .stepLabel {
+  color: var(--text-primary);
+}
+
+/* Linha conectora entre as etapas */
+.stepLine {
+  flex: 1;
+  height: 3px;
+  background: var(--border);
+  margin: 0 1rem;
+  position: relative;
+  top: -12px;
+  transition: all 0.4s ease;
+}
+
+.step.completed + .stepLine {
+  background: var(--accent);
+}
+
+/* ===========================
+   CONTEÚDO DAS ETAPAS
+   =========================== */
+.stepContent {
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 .title {
   color: var(--text-primary);
   font-size: 2rem;
@@ -43,24 +136,9 @@
   margin-bottom: 3rem;
 }
 
-.section {
-  margin-bottom: 3rem;
-}
-
-.sectionTitle {
-  color: var(--text-primary);
-  font-size: 1.3rem;
-  font-weight: 600;
-  margin-bottom: 1.5rem;
-}
-
-.sectionSubtitle {
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-  margin-bottom: 1.5rem;
-}
-
-/* GRID DE OPÇÕES COM ANIMAÇÕES */
+/* ===========================
+   GRID DE OPÇÕES
+   =========================== */
 .optionsGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -83,7 +161,7 @@
   overflow: hidden;
 }
 
-/* BARRA SUPERIOR ANIMADA (IGUAL AO ADMIN) */
+/* Barra superior animada */
 .optionCard::before {
   content: '';
   position: absolute;
@@ -101,14 +179,14 @@
   transform: scaleX(1);
 }
 
-/* HOVER EFFECT (IGUAL AO ADMIN) */
+/* Hover effect */
 .optionCard:hover {
   transform: translateY(-12px) scale(1.02);
   box-shadow: 0 20px 40px rgba(0, 212, 255, 0.2);
   border-color: var(--accent);
 }
 
-/* ESTADO SELECIONADO */
+/* Estado selecionado */
 .optionCard.selected {
   background: linear-gradient(135deg, 
     var(--bg-secondary) 0%, 
@@ -128,7 +206,7 @@
   50% { transform: scaleX(0.95); }
 }
 
-/* ÍCONE COM ANIMAÇÃO */
+/* Ícone com animação */
 .optionIcon {
   font-size: 3rem;
   width: 70px;
@@ -152,7 +230,7 @@
     rgba(0, 212, 255, 0.1));
 }
 
-/* TEXTOS */
+/* Textos */
 .optionTitle {
   color: var(--text-primary);
   font-size: 1.2rem;
@@ -172,11 +250,38 @@
   line-height: 1.4;
 }
 
-/* BOTÃO GERAR RECOMENDAÇÃO */
+/* ===========================
+   BOTÕES DE NAVEGAÇÃO
+   =========================== */
+.actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 3rem;
+}
+
+.backButton {
+  flex: 1;
+  padding: 1rem 2rem;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 2px solid var(--border);
+  border-radius: 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.backButton:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateX(-4px);
+}
+
+.nextButton,
 .submitButton {
-  width: 100%;
-  padding: 1.25rem;
-  margin-top: 2rem;
+  flex: 2;
+  padding: 1.25rem 2rem;
   background: linear-gradient(135deg, var(--accent), #0099cc);
   color: white;
   border: none;
@@ -188,22 +293,27 @@
   box-shadow: 0 4px 16px rgba(0, 212, 255, 0.3);
 }
 
+.nextButton:hover,
 .submitButton:hover {
   transform: translateY(-4px);
   box-shadow: 0 8px 24px rgba(0, 212, 255, 0.5);
 }
 
+.nextButton:active,
 .submitButton:active {
   transform: translateY(-2px);
 }
 
+.nextButton:disabled,
 .submitButton:disabled {
   opacity: 0.5;
   cursor: not-allowed;
   transform: none;
 }
 
-/* RESPONSIVO */
+/* ===========================
+   RESPONSIVO
+   =========================== */
 @media (max-width: 768px) {
   .container {
     padding: 1rem;
@@ -211,6 +321,24 @@
 
   .card {
     padding: 2rem 1.5rem;
+  }
+
+  .stepper {
+    padding: 0 0.5rem;
+  }
+
+  .stepNumber {
+    width: 40px;
+    height: 40px;
+    font-size: 1rem;
+  }
+
+  .stepLabel {
+    font-size: 0.75rem;
+  }
+
+  .stepLine {
+    margin: 0 0.5rem;
   }
 
   .title {
@@ -230,5 +358,15 @@
     font-size: 2.5rem;
     width: 60px;
     height: 60px;
+  }
+
+  .actions {
+    flex-direction: column;
+  }
+
+  .backButton,
+  .nextButton,
+  .submitButton {
+    flex: 1;
   }
 }

@@ -10,41 +10,53 @@ const Recomendacao: React.FC = () => {
   useEffect(() => {
     // Redireciona se não houver recomendação
     if (!recommendation) {
+      console.warn('⚠️ Nenhuma recomendação encontrada. Redirecionando...');
       navigate('/questionario');
+    } else {
+      console.log('✅ Recomendação carregada:', recommendation);
+      console.log('✅ Dados do questionário:', questionnaireData);
     }
-  }, [recommendation, navigate]);
+  }, [recommendation, navigate, questionnaireData]);
 
+  // Loading state
   if (!recommendation) {
-    return null;
+    return (
+      <div className={styles.container}>
+        <div className={styles.header}>
+          <p>Carregando recomendação...</p>
+        </div>
+      </div>
+    );
   }
 
-  // Calcula o preço total
+  // ✅ CALCULA PREÇO TOTAL COM VERIFICAÇÃO SEGURA
   const totalPrice = 
-    recommendation.cpu.preco +
-    recommendation.placaMae.preco +
+    (recommendation.cpu?.preco || 0) +
+    (recommendation.placaMae?.preco || 0) +
     (recommendation.gpu?.preco || 0) +
-    recommendation.memoriaRam.preco +
-    recommendation.armazenamento.preco +
-    recommendation.fonte.preco +
-    recommendation.gabinete.preco +
+    (recommendation.memoriaRam?.preco || 0) +
+    (recommendation.armazenamento?.preco || 0) +
+    (recommendation.fonte?.preco || 0) +
+    (recommendation.gabinete?.preco || 0) +
     (recommendation.refrigeracao?.preco || 0);
 
-  // Mapeia finalidade para nome da build
+  // ✅ CORRIGIDO: Mapeia CORRETAMENTE as finalidades
   const buildNames: { [key: string]: string } = {
-    'gaming': 'Gaming',
-    'trabalho': 'Trabalho',
-    'estudos': 'Estudos'
+    'Jogos': 'Gaming',
+    'Trabalho': 'Trabalho',
+    'Estudos': 'Estudos'
   };
 
+  // ✅ CORRIGIDO: Mapeia CORRETAMENTE os orçamentos
   const budgetNames: { [key: string]: string } = {
-    '2000-4000': 'Econômica',
-    '4000-7000': 'Intermediária',
-    '7000-12000': 'Alta Performance',
-    '12000+': 'Extrema'
+    'econômico': 'Econômica',
+    'intermediário': 'Intermediária',
+    'alto': 'Alta Performance',
+    'extremo': 'Extrema'
   };
 
   const buildName = questionnaireData 
-    ? `Build ${buildNames[questionnaireData.usage]} ${budgetNames[questionnaireData.budget]}`
+    ? `Build ${buildNames[questionnaireData.usage] || questionnaireData.usage} ${budgetNames[questionnaireData.budget] || questionnaireData.budget}`
     : 'Sua Build Personalizada';
 
   // Conta componentes
@@ -53,15 +65,23 @@ const Recomendacao: React.FC = () => {
     (recommendation.gpu ? 1 : 0) +
     (recommendation.refrigeracao ? 1 : 0);
 
-  // Justificativas dinâmicas baseadas nos componentes
+  // ✅ JUSTIFICATIVAS COM VERIFICAÇÃO SEGURA
   const razoes = [
-    `${recommendation.cpu.nome} - Processador ${recommendation.cpu.marca} de alto desempenho`,
+    recommendation.cpu 
+      ? `${recommendation.cpu.nome} - Processador ${recommendation.cpu.marca} de alto desempenho`
+      : 'Processador não disponível',
     recommendation.gpu 
       ? `${recommendation.gpu.nome} - GPU com ${recommendation.gpu.memoriaVram}GB VRAM`
       : 'Processador com gráficos integrados para tarefas do dia a dia',
-    `${recommendation.memoriaRam.capacidadeGb}GB RAM ${recommendation.memoriaRam.tipo} - Memória suficiente para multitasking`,
-    `${recommendation.armazenamento.nome} - Armazenamento ${recommendation.armazenamento.tipo} para velocidade`,
-    `${recommendation.fonte.nome} - Fonte ${recommendation.fonte.potenciaWatts}W com margem de segurança`
+    recommendation.memoriaRam
+      ? `${recommendation.memoriaRam.capacidadeGb}GB RAM ${recommendation.memoriaRam.tipo} - Memória suficiente para multitasking`
+      : 'Memória RAM não disponível',
+    recommendation.armazenamento
+      ? `${recommendation.armazenamento.nome} - Armazenamento ${recommendation.armazenamento.tipo} para velocidade`
+      : 'Armazenamento não disponível',
+    recommendation.fonte
+      ? `${recommendation.fonte.nome} - Fonte ${recommendation.fonte.potenciaWatts}W com margem de segurança`
+      : 'Fonte não disponível'
   ];
 
   return (
@@ -75,7 +95,9 @@ const Recomendacao: React.FC = () => {
       <div className={styles.buildCard}>
         <div className={styles.buildHeader}>
           <h3>{buildName}</h3>
-          <div className={styles.preco}>R$ {totalPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
+          <div className={styles.preco}>
+            R$ {totalPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+          </div>
         </div>
 
         <div className={styles.justificativasSection}>

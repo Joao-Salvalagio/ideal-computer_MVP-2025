@@ -1,9 +1,9 @@
 import api from './api';
 
 export interface RecommendationRequest {
-  usage: string;      // "gaming", "trabalho", "estudos"
-  budget: string;     // "economico", "intermediario", "alto", "extremo"
-  detail: string;     // "Básico", "Office", "Engenharia", etc
+  usage: string;      // "Jogos", "Trabalho", "Estudos"
+  budget: string;     // "econômico", "intermediário", "alto", "extremo"
+  detail: string;     // "Jogos Leves", "Office Básico", etc
 }
 
 export interface ComponentModel {
@@ -67,7 +67,8 @@ export interface RecommendationResponse {
 
 export const recommendationService = {
   async generateBuild(data: RecommendationRequest): Promise<RecommendationResponse> {
-    const response = await api.post<RecommendationResponse>('/recommendations/generate', data);
+    // ✅ CORRIGIDO: Adicionado /api no início
+    const response = await api.post<RecommendationResponse>('/api/recommendations/generate', data);
     return response.data;
   }
 };
