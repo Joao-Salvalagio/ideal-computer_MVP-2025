@@ -1,20 +1,36 @@
 import { Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import ProtectedRoute from './components/ProtectedRoute';
+
+// Páginas Públicas
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Questionario from './pages/Questionario';
 import Recomendacao from './pages/Recomendacao';
 import DetalhesComponentes from './pages/DetalhesComponentes';
+
+// Páginas Admin
 import Admin from './pages/Admin';
 import GerenciarUsuarios from './pages/GerenciarUsuarios';
+
+// Formulários Admin
+import CpuForm from './components/admin/CpuForm';
+import GpuForm from './components/admin/GpuForm';
+import PlacaMaeForm from './components/admin/PlacaMaeForm';
+import MemoriaRamForm from './components/admin/MemoriaRamForm';
+import ArmazenamentoForm from './components/admin/ArmazenamentoForm';
+import FonteForm from './components/admin/FonteForm';
+import GabineteForm from './components/admin/GabineteForm';
+import RefrigeracaoForm from './components/admin/RefrigeracaoForm';
 
 const AppRoutes = () => (
   <>
     <Navbar />
     <Routes>
-      {/* Rotas Públicas */}
+      {/* ========================================
+          ROTAS PÚBLICAS
+      ======================================== */}
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
@@ -22,7 +38,9 @@ const AppRoutes = () => (
       <Route path="/recomendacao" element={<Recomendacao />} />
       <Route path="/detalhes-componentes" element={<DetalhesComponentes />} />
       
-      {/* Rotas Protegidas - Admin */}
+      {/* ========================================
+          ROTAS PROTEGIDAS - ADMIN DASHBOARD
+      ======================================== */}
       <Route 
         path="/admin" 
         element={
@@ -32,12 +50,98 @@ const AppRoutes = () => (
         } 
       />
       
-      {/* Nova Rota - Gerenciamento de Usuários */}
+      {/* ========================================
+          ROTAS PROTEGIDAS - GERENCIAMENTO DE USUÁRIOS
+      ======================================== */}
       <Route 
         path="/admin/usuarios" 
         element={
           <ProtectedRoute requireAdmin={true}>
             <GerenciarUsuarios />
+          </ProtectedRoute>
+        } 
+      />
+
+      {/* ========================================
+          ROTAS PROTEGIDAS - CRUD DE COMPONENTES
+      ======================================== */}
+      
+      {/* CPU */}
+      <Route 
+        path="/admin/cpus" 
+        element={
+          <ProtectedRoute requireAdmin={true}>
+            <CpuForm />
+          </ProtectedRoute>
+        } 
+      />
+
+      {/* GPU */}
+      <Route 
+        path="/admin/gpus" 
+        element={
+          <ProtectedRoute requireAdmin={true}>
+            <GpuForm />
+          </ProtectedRoute>
+        } 
+      />
+
+      {/* Placa-mãe */}
+      <Route 
+        path="/admin/placas-mae" 
+        element={
+          <ProtectedRoute requireAdmin={true}>
+            <PlacaMaeForm />
+          </ProtectedRoute>
+        } 
+      />
+
+      {/* Memória RAM */}
+      <Route 
+        path="/admin/memorias-ram" 
+        element={
+          <ProtectedRoute requireAdmin={true}>
+            <MemoriaRamForm />
+          </ProtectedRoute>
+        } 
+      />
+
+      {/* Armazenamento */}
+      <Route 
+        path="/admin/armazenamentos" 
+        element={
+          <ProtectedRoute requireAdmin={true}>
+            <ArmazenamentoForm />
+          </ProtectedRoute>
+        } 
+      />
+
+      {/* Fonte */}
+      <Route 
+        path="/admin/fontes" 
+        element={
+          <ProtectedRoute requireAdmin={true}>
+            <FonteForm />
+          </ProtectedRoute>
+        } 
+      />
+
+      {/* Gabinete */}
+      <Route 
+        path="/admin/gabinetes" 
+        element={
+          <ProtectedRoute requireAdmin={true}>
+            <GabineteForm />
+          </ProtectedRoute>
+        } 
+      />
+
+      {/* Refrigeração */}
+      <Route 
+        path="/admin/refrigeracoes" 
+        element={
+          <ProtectedRoute requireAdmin={true}>
+            <RefrigeracaoForm />
           </ProtectedRoute>
         } 
       />

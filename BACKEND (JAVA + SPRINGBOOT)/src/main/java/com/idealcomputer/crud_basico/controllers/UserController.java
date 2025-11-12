@@ -4,6 +4,7 @@ import com.idealcomputer.crud_basico.models.UserModel;
 import com.idealcomputer.crud_basico.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -11,10 +12,10 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/usuarios")
-public class UserController { // NÃO estende mais BaseCrudController
+@RequestMapping("/api/usuarios")  // ✅ CORRIGIDO: Adicionado /api
+@CrossOrigin(origins = "*")
+public class UserController {
 
-    // 1. Injetamos o UserService (que agora é independente)
     private final UserService userService;
 
     @Autowired
@@ -22,39 +23,53 @@ public class UserController { // NÃO estende mais BaseCrudController
         this.userService = service;
     }
 
-    /*
-     * 2. Re-implementamos todos os 5 endpoints CRUD
-     * que antes eram herdados.
-     */
-
+    // ===========================
+    // GET ALL - Listar todos
+    // ===========================
     @GetMapping
+    @PreAuthorize("hasAuthority('ADMINISTRADOR')")
     public ResponseEntity<List<UserModel>> findAll() {
         return ResponseEntity.ok(userService.findAll());
     }
 
-    @GetMapping(value = "/{id}")
+    // ===========================
+    // GET BY ID - Buscar por ID
+    // ===========================
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMINISTRADOR')")
     public ResponseEntity<UserModel> findById(@PathVariable Long id) {
         return ResponseEntity.ok(userService.findById(id));
     }
 
+    // ===========================
+    // POST - Criar usuário
+    // ===========================
     @PostMapping
     public ResponseEntity<UserModel> create(@RequestBody UserModel user) {
-        // 3. O método "save" do userService agora irá CRIPTOGRAFAR a senha
         UserModel newUser = userService.save(user);
-        URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}")
-                .buildAndExpand(newUser.getId()).toUri();
+        URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(newUser.getId())
+                .toUri();
         return ResponseEntity.created(uri).body(newUser);
     }
 
-    @PutMapping(value = "/{id}")
+    // ===========================
+    // PUT - Atualizar usuário
+    // ===========================
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMINISTRADOR')")
     public ResponseEntity<UserModel> update(@PathVariable Long id, @RequestBody UserModel user) {
         user.setId(id);
-        // 4. O "save" aqui também vai criptografar a senha caso ela seja alterada.
         UserModel updatedUser = userService.save(user);
         return ResponseEntity.ok(updatedUser);
     }
 
-    @DeleteMapping(value = "/{id}")
+    // ===========================
+    // DELETE - Excluir usuário
+    // ===========================
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMINISTRADOR')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         userService.deleteById(id);
         return ResponseEntity.noContent().build();

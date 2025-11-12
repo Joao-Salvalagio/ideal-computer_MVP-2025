@@ -53,47 +53,28 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+                .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(csrf -> csrf.disable()) // ✅ Desabilita CSRF
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        // Rotas públicas
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/api/recommendations/**").permitAll()
 
-                .authorizeHttpRequests(authorize -> authorize
-                        // ========================================
-                        // ENDPOINTS PÚBLICOS (SEM AUTENTICAÇÃO)
-                        // ========================================
-                        .requestMatchers(HttpMethod.POST, "/api/auth/register").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+                        // Rotas admin - TODAS precisam de autenticação + role ADMINISTRADOR
+                        .requestMatchers("/api/usuarios/**").hasAuthority("ADMINISTRADOR")
+                        .requestMatchers("/api/cpus/**").hasAuthority("ADMINISTRADOR")
+                        .requestMatchers("/api/gpus/**").hasAuthority("ADMINISTRADOR")
+                        .requestMatchers("/api/placas-mae/**").hasAuthority("ADMINISTRADOR")
+                        .requestMatchers("/api/memorias-ram/**").hasAuthority("ADMINISTRADOR")
+                        .requestMatchers("/api/armazenamentos/**").hasAuthority("ADMINISTRADOR")
+                        .requestMatchers("/api/fontes/**").hasAuthority("ADMINISTRADOR")
+                        .requestMatchers("/api/gabinetes/**").hasAuthority("ADMINISTRADOR")
+                        .requestMatchers("/api/refrigeracoes/**").hasAuthority("ADMINISTRADOR")
 
-                        // Endpoints de recomendações (público)
-                        .requestMatchers(HttpMethod.POST, "/api/recommendations/generate").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/recommendations/**").permitAll()
-
-                        // ========================================
-                        // ✅ ENDPOINTS DE BUILDS (USUÁRIOS LOGADOS)
-                        // ========================================
-                        .requestMatchers(HttpMethod.GET, "/api/builds/**").authenticated()
-                        .requestMatchers(HttpMethod.POST, "/api/builds/**").authenticated()
-                        .requestMatchers(HttpMethod.DELETE, "/api/builds/**").authenticated()
-
-                        // ========================================
-                        // ENDPOINTS PROTEGIDOS - APENAS ADMIN
-                        // ========================================
-                        .requestMatchers("/api/usuarios/**").hasAuthority(UserRole.ADMINISTRADOR.name())
-                        .requestMatchers("/api/cpus/**").hasAuthority(UserRole.ADMINISTRADOR.name())
-                        .requestMatchers("/api/placas-mae/**").hasAuthority(UserRole.ADMINISTRADOR.name())
-                        .requestMatchers("/api/gpus/**").hasAuthority(UserRole.ADMINISTRADOR.name())
-                        .requestMatchers("/api/memorias-ram/**").hasAuthority(UserRole.ADMINISTRADOR.name())
-                        .requestMatchers("/api/armazenamentos/**").hasAuthority(UserRole.ADMINISTRADOR.name())
-                        .requestMatchers("/api/fontes/**").hasAuthority(UserRole.ADMINISTRADOR.name())
-                        .requestMatchers("/api/gabinetes/**").hasAuthority(UserRole.ADMINISTRADOR.name())
-                        .requestMatchers("/api/refrigeracoes/**").hasAuthority(UserRole.ADMINISTRADOR.name())
-
-                        // ========================================
-                        // OUTRAS ROTAS AUTENTICADAS
-                        // ========================================
+                        // Qualquer outra requisição precisa estar autenticada
                         .anyRequest().authenticated()
                 )
-
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

@@ -27,54 +27,54 @@ const Admin = () => {
           <span className={styles.cardBadge}>Novo</span>
         </Link>
 
-        {/* Cards de Componentes */}
-        <div className={styles.card}>
+        {/* Cards de Componentes - AGORA COM LINKS */}
+        <Link to="/admin/cpus" className={styles.card}>
           <div className={styles.cardIcon}>🔧</div>
           <h3>CPU</h3>
           <p>Gerenciar processadores</p>
-        </div>
+        </Link>
 
-        <div className={styles.card}>
+        <Link to="/admin/gpus" className={styles.card}>
           <div className={styles.cardIcon}>🎮</div>
           <h3>GPU</h3>
           <p>Gerenciar placas de vídeo</p>
-        </div>
+        </Link>
 
-        <div className={styles.card}>
+        <Link to="/admin/placas-mae" className={styles.card}>
           <div className={styles.cardIcon}>💾</div>
           <h3>Placa-mãe</h3>
           <p>Gerenciar placas-mãe</p>
-        </div>
+        </Link>
 
-        <div className={styles.card}>
+        <Link to="/admin/memorias-ram" className={styles.card}>
           <div className={styles.cardIcon}>🧠</div>
           <h3>Memória RAM</h3>
           <p>Gerenciar memórias RAM</p>
-        </div>
+        </Link>
 
-        <div className={styles.card}>
+        <Link to="/admin/armazenamentos" className={styles.card}>
           <div className={styles.cardIcon}>💿</div>
           <h3>Armazenamento</h3>
           <p>Gerenciar HDs e SSDs</p>
-        </div>
+        </Link>
 
-        <div className={styles.card}>
+        <Link to="/admin/fontes" className={styles.card}>
           <div className={styles.cardIcon}>⚡</div>
           <h3>Fonte</h3>
           <p>Gerenciar fontes de alimentação</p>
-        </div>
+        </Link>
 
-        <div className={styles.card}>
+        <Link to="/admin/gabinetes" className={styles.card}>
           <div className={styles.cardIcon}>📦</div>
           <h3>Gabinete</h3>
           <p>Gerenciar gabinetes</p>
-        </div>
+        </Link>
 
-        <div className={styles.card}>
+        <Link to="/admin/refrigeracoes" className={styles.card}>
           <div className={styles.cardIcon}>❄️</div>
           <h3>Refrigeração</h3>
           <p>Gerenciar sistemas de refrigeração</p>
-        </div>
+        </Link>
       </div>
     </div>
   );
