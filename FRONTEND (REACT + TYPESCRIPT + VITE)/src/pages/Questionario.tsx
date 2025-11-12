@@ -218,7 +218,8 @@ const Questionario = () => {
       setRecommendation(response);
       setQuestionnaireData({
         usage: formData.usage,
-        budget: formData.budget
+        budget: formData.budget,
+        detail: formData.detail
       });
 
       // Redirecionar para página de recomendação

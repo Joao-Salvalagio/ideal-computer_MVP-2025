@@ -29,7 +29,7 @@ const Recomendacao: React.FC = () => {
     );
   }
 
-  // ✅ CALCULA PREÇO TOTAL COM VERIFICAÇÃO SEGURA
+  // ✅ CALCULA PREÇO TOTAL
   const totalPrice = 
     (recommendation.cpu?.preco || 0) +
     (recommendation.placaMae?.preco || 0) +
@@ -40,14 +40,14 @@ const Recomendacao: React.FC = () => {
     (recommendation.gabinete?.preco || 0) +
     (recommendation.refrigeracao?.preco || 0);
 
-  // ✅ CORRIGIDO: Mapeia CORRETAMENTE as finalidades
+  // Mapeia finalidades
   const buildNames: { [key: string]: string } = {
     'Jogos': 'Gaming',
     'Trabalho': 'Trabalho',
     'Estudos': 'Estudos'
   };
 
-  // ✅ CORRIGIDO: Mapeia CORRETAMENTE os orçamentos
+  // Mapeia orçamentos
   const budgetNames: { [key: string]: string } = {
     'econômico': 'Econômica',
     'intermediário': 'Intermediária',
@@ -59,30 +59,79 @@ const Recomendacao: React.FC = () => {
     ? `Build ${buildNames[questionnaireData.usage] || questionnaireData.usage} ${budgetNames[questionnaireData.budget] || questionnaireData.budget}`
     : 'Sua Build Personalizada';
 
-  // Conta componentes
+  // ✅ CORRIGIDO: Conta TODOS os componentes
   const componentCount = 
-    5 + // CPU, Placa-mãe, RAM, Armazenamento, Fonte, Gabinete
+    (recommendation.cpu ? 1 : 0) +
+    (recommendation.placaMae ? 1 : 0) +
     (recommendation.gpu ? 1 : 0) +
+    (recommendation.memoriaRam ? 1 : 0) +
+    (recommendation.armazenamento ? 1 : 0) +
+    (recommendation.fonte ? 1 : 0) +
+    (recommendation.gabinete ? 1 : 0) +
     (recommendation.refrigeracao ? 1 : 0);
 
-  // ✅ JUSTIFICATIVAS COM VERIFICAÇÃO SEGURA
-  const razoes = [
-    recommendation.cpu 
-      ? `${recommendation.cpu.nome} - Processador ${recommendation.cpu.marca} de alto desempenho`
-      : 'Processador não disponível',
-    recommendation.gpu 
-      ? `${recommendation.gpu.nome} - GPU com ${recommendation.gpu.memoriaVram}GB VRAM`
-      : 'Processador com gráficos integrados para tarefas do dia a dia',
-    recommendation.memoriaRam
-      ? `${recommendation.memoriaRam.capacidadeGb}GB RAM ${recommendation.memoriaRam.tipo} - Memória suficiente para multitasking`
-      : 'Memória RAM não disponível',
-    recommendation.armazenamento
-      ? `${recommendation.armazenamento.nome} - Armazenamento ${recommendation.armazenamento.tipo} para velocidade`
-      : 'Armazenamento não disponível',
-    recommendation.fonte
-      ? `${recommendation.fonte.nome} - Fonte ${recommendation.fonte.potenciaWatts}W com margem de segurança`
-      : 'Fonte não disponível'
-  ];
+  // ✅ CORRIGIDO: Justificativas COMPLETAS para TODOS os componentes
+  const razoes: string[] = [];
+
+  // 1. CPU
+  if (recommendation.cpu) {
+    razoes.push(
+      `${recommendation.cpu.nome} - Processador ${recommendation.cpu.marca} de alto desempenho com ${recommendation.cpu.potenciaRecomendadaW}W TDP`
+    );
+  }
+
+  // 2. Placa-mãe
+  if (recommendation.placaMae) {
+    razoes.push(
+      `${recommendation.placaMae.nome} - Placa-mãe ${recommendation.placaMae.formato} com chipset moderno e suporte a ${recommendation.placaMae.tipoRamSuportado}`
+    );
+  }
+
+  // 3. GPU
+  if (recommendation.gpu) {
+    razoes.push(
+      `${recommendation.gpu.nome} - GPU ${recommendation.gpu.marca} com ${recommendation.gpu.memoriaVram}GB VRAM para jogos em alta qualidade`
+    );
+  } else {
+    razoes.push(
+      'Processador com gráficos integrados suficientes para tarefas do dia a dia'
+    );
+  }
+
+  // 4. Memória RAM
+  if (recommendation.memoriaRam) {
+    razoes.push(
+      `${recommendation.memoriaRam.nome} - ${recommendation.memoriaRam.capacidadeGb}GB ${recommendation.memoriaRam.tipo} @ ${recommendation.memoriaRam.frequenciaMhz}MHz para multitasking fluido`
+    );
+  }
+
+  // 5. Armazenamento
+  if (recommendation.armazenamento) {
+    razoes.push(
+      `${recommendation.armazenamento.nome} - ${recommendation.armazenamento.tipo} de ${recommendation.armazenamento.capacidadeGb}GB para velocidade e confiabilidade`
+    );
+  }
+
+  // 6. Fonte
+  if (recommendation.fonte) {
+    razoes.push(
+      `${recommendation.fonte.nome} - Fonte ${recommendation.fonte.potenciaWatts}W ${recommendation.fonte.formato} com margem de segurança`
+    );
+  }
+
+  // 7. Gabinete
+  if (recommendation.gabinete) {
+    razoes.push(
+      `${recommendation.gabinete.nome} - Gabinete ${recommendation.gabinete.marca} com suporte a ${recommendation.gabinete.formatosPlacaMaeSuportados}`
+    );
+  }
+
+  // 8. Refrigeração
+  if (recommendation.refrigeracao) {
+    razoes.push(
+      `${recommendation.refrigeracao.nome} - ${recommendation.refrigeracao.tipo} para temperaturas ideais e desempenho sustentado`
+    );
+  }
 
   return (
     <div className={styles.container}>
@@ -132,14 +181,20 @@ const Recomendacao: React.FC = () => {
           </div>
         </div>
 
-        <div className={styles.actions}>
-          <button className={styles.primaryButton} onClick={() => navigate('/detalhes-componentes')}>
-            Ver peças e valores →
+      <div className={styles.actions}>
+        <button 
+          className={styles.primaryButton} 
+          onClick={() => navigate('/detalhes-componentes')}
+          >
+           Ver mais detalhes → Peças, Valores e Opções de Salvar e Exportar Build
           </button>
-          <button className={styles.secondaryButton} onClick={() => navigate('/questionario')}>
-            Refazer questionário
-          </button>
-        </div>
+          <button 
+          className={styles.secondaryButton} 
+          onClick={() => navigate('/questionario')}
+          >
+          Refazer questionário
+        </button>
+      </div>
       </div>
     </div>
   );

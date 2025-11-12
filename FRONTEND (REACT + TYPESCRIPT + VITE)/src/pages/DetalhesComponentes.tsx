@@ -1,119 +1,275 @@
-import React, { useEffect } from 'react';
-import styles from './DetalhesComponentes.module.css';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useRecommendation } from '../contexts/RecommendationContext';
+import { useAuth } from '../contexts/AuthContext';
+import { buildService } from '../services/buildService';
+import styles from './DetalhesComponentes.module.css';
 
 const DetalhesComponentes: React.FC = () => {
   const navigate = useNavigate();
   const { recommendation, questionnaireData } = useRecommendation();
+  const { isLoggedIn, user } = useAuth();
+  const [loading, setLoading] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
 
-  useEffect(() => {
-    // Redireciona se não houver recomendação
+  // Redireciona se não houver recomendação
+  React.useEffect(() => {
     if (!recommendation) {
+      console.warn('⚠️ Nenhuma recomendação encontrada. Redirecionando...');
       navigate('/questionario');
     }
   }, [recommendation, navigate]);
 
-  if (!recommendation) {
-    return null;
+  if (!recommendation || !questionnaireData) {
+    return (
+      <div className={styles.container}>
+        <p>Carregando...</p>
+      </div>
+    );
   }
 
-  // Mapeia finalidade para nome da build
+  // Calcula preço total
+  const totalPrice =
+    (recommendation.cpu?.preco || 0) +
+    (recommendation.placaMae?.preco || 0) +
+    (recommendation.gpu?.preco || 0) +
+    (recommendation.memoriaRam?.preco || 0) +
+    (recommendation.armazenamento?.preco || 0) +
+    (recommendation.fonte?.preco || 0) +
+    (recommendation.gabinete?.preco || 0) +
+    (recommendation.refrigeracao?.preco || 0);
+
+  // Nome da build
   const buildNames: { [key: string]: string } = {
-    'gaming': 'Gaming',
-    'trabalho': 'Trabalho',
-    'estudos': 'Estudos'
+    Jogos: 'Gaming',
+    Trabalho: 'Trabalho',
+    Estudos: 'Estudos',
   };
 
   const budgetNames: { [key: string]: string } = {
-    '2000-4000': 'Econômica',
-    '4000-7000': 'Intermediária',
-    '7000-12000': 'Alta Performance',
-    '12000+': 'Extrema'
+    econômico: 'Econômica',
+    intermediário: 'Intermediária',
+    alto: 'Alta Performance',
+    extremo: 'Extrema',
   };
 
-  const buildName = questionnaireData 
-    ? `Build ${buildNames[questionnaireData.usage]} ${budgetNames[questionnaireData.budget]}`
-    : 'Sua Build Personalizada';
+  const buildName = `Build ${buildNames[questionnaireData.usage] || questionnaireData.usage} ${budgetNames[questionnaireData.budget] || questionnaireData.budget}`;
 
-  // Monta array de componentes
+  // ✅ Função para salvar build (ajustada ao backend)
+  const handleSaveBuild = async () => {
+    if (!recommendation.cpu || !recommendation.placaMae || !recommendation.memoriaRam || 
+        !recommendation.armazenamento || !recommendation.fonte || !recommendation.gabinete) {
+      alert('Erro: Componentes obrigatórios estão faltando.');
+      return;
+    }
+
+    setLoading(true);
+    setSaveSuccess(false);
+
+    try {
+      // ✅ Dados no formato do backend (snake_case)
+      await buildService.saveBuild({
+        nome_build: buildName,
+        id_cpu: recommendation.cpu.id,
+        id_placamae: recommendation.placaMae.id,
+        id_gpu: recommendation.gpu?.id || null,
+        id_ram: recommendation.memoriaRam.id,
+        id_armazenamento: recommendation.armazenamento.id,
+        id_fonte: recommendation.fonte.id,
+        id_gabinete: recommendation.gabinete.id,
+        id_refrigeracao: recommendation.refrigeracao?.id || null,
+        uso_principal: questionnaireData.usage,
+        detalhe: questionnaireData.detail,
+        orcamento: questionnaireData.budget,
+      });
+
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000);
+    } catch (error) {
+      console.error('Erro ao salvar build:', error);
+      alert('Erro ao salvar build. Tente novamente.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Função para exportar JSON
+  const handleExportJSON = () => {
+    const buildData = {
+      nome: buildName,
+      finalidade: questionnaireData.usage,
+      orcamento: questionnaireData.budget,
+      componentes: {
+        cpu: recommendation.cpu,
+        placaMae: recommendation.placaMae,
+        gpu: recommendation.gpu,
+        memoriaRam: recommendation.memoriaRam,
+        armazenamento: recommendation.armazenamento,
+        fonte: recommendation.fonte,
+        gabinete: recommendation.gabinete,
+        refrigeracao: recommendation.refrigeracao,
+      },
+      precoTotal: totalPrice,
+      dataCriacao: new Date().toISOString(),
+    };
+
+    const dataStr = JSON.stringify(buildData, null, 2);
+    const blob = new Blob([dataStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${buildName.replace(/\s+/g, '_')}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  // Componentes da tabela
   const componentes = [
-    { tipo: 'Processador', nome: `${recommendation.cpu.marca} ${recommendation.cpu.nome}`, preco: recommendation.cpu.preco },
-    { tipo: 'Placa-mãe', nome: `${recommendation.placaMae.marca} ${recommendation.placaMae.nome}`, preco: recommendation.placaMae.preco },
-    ...(recommendation.gpu ? [{ tipo: 'Placa de Vídeo', nome: `${recommendation.gpu.marca} ${recommendation.gpu.nome}`, preco: recommendation.gpu.preco }] : []),
-    { tipo: 'Memória RAM', nome: `${recommendation.memoriaRam.marca} ${recommendation.memoriaRam.nome} ${recommendation.memoriaRam.capacidadeGb}GB`, preco: recommendation.memoriaRam.preco },
-    { tipo: 'Armazenamento', nome: `${recommendation.armazenamento.marca} ${recommendation.armazenamento.nome}`, preco: recommendation.armazenamento.preco },
-    { tipo: 'Fonte', nome: `${recommendation.fonte.marca} ${recommendation.fonte.nome}`, preco: recommendation.fonte.preco },
-    { tipo: 'Gabinete', nome: `${recommendation.gabinete.marca} ${recommendation.gabinete.nome}`, preco: recommendation.gabinete.preco },
-    ...(recommendation.refrigeracao ? [{ tipo: 'Refrigeração', nome: `${recommendation.refrigeracao.marca} ${recommendation.refrigeracao.nome}`, preco: recommendation.refrigeracao.preco }] : [])
+    { tipo: 'Processador (CPU)', item: recommendation.cpu },
+    { tipo: 'Placa-mãe', item: recommendation.placaMae },
+    { tipo: 'Placa de Vídeo (GPU)', item: recommendation.gpu },
+    { tipo: 'Memória RAM', item: recommendation.memoriaRam },
+    { tipo: 'Armazenamento', item: recommendation.armazenamento },
+    { tipo: 'Fonte', item: recommendation.fonte },
+    { tipo: 'Gabinete', item: recommendation.gabinete },
+    { tipo: 'Refrigeração', item: recommendation.refrigeracao },
   ];
-
-  // Calcula total
-  const totalPrice = componentes.reduce((sum, comp) => sum + comp.preco, 0);
 
   return (
     <div className={styles.container}>
-      <h2 className={styles.title}>Componentes e Preços</h2>
-      <p className={styles.subtitle}>Detalhamento completo da sua build recomendada</p>
-
-      <div className={styles.buildHeader}>
-        <div className={styles.buildInfo}>
-          <span className={styles.icon}>🛒</span>
-          <div>
-            <h3>{buildName}</h3>
-            <p>Total: <strong>R$ {totalPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</strong></p>
-          </div>
-        </div>
+      {/* Header */}
+      <div className={styles.header}>
+        <div className={styles.badge}>🖥️ Detalhes Completos da Build</div>
+        <h1>{buildName}</h1>
+        <p className={styles.subtitle}>Confira todos os componentes, preços e opções</p>
       </div>
 
-      <div className={styles.tableCard}>
-        <h4 className={styles.tableTitle}>Lista de Componentes</h4>
-        <p className={styles.tableSubtitle}>Todos os componentes necessários para sua build</p>
+      {/* Alerta de sucesso ao salvar */}
+      {saveSuccess && (
+        <div className={styles.successAlert}>
+          ✅ Build salva com sucesso!
+        </div>
+      )}
 
-        <div className={styles.tableWrapper}>
-          <table className={styles.table}>
+      {/* Card principal */}
+      <div className={styles.buildCard}>
+        {/* Tabela de componentes */}
+        <div className={styles.tableContainer}>
+          <table className={styles.componentsTable}>
             <thead>
               <tr>
                 <th>Tipo</th>
-                <th>Componente</th>
+                <th>Nome</th>
+                <th>Marca</th>
+                <th>Especificações</th>
                 <th>Preço</th>
-                <th>Link</th>
               </tr>
             </thead>
             <tbody>
-              {componentes.map((comp, index) => (
-                <tr key={index}>
-                  <td>
-                    <span className={styles.badge}>{comp.tipo}</span>
-                  </td>
-                  <td className={styles.componentName}>{comp.nome}</td>
-                  <td className={styles.preco}>R$ {comp.preco.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
-                  <td>
-                    <span className={styles.noLink}>N/A</span>
-                  </td>
-                </tr>
-              ))}
+              {componentes.map((comp, index) => {
+                const item = comp.item;
+                if (!item) {
+                  return (
+                    <tr key={index} className={styles.emptyRow}>
+                      <td>{comp.tipo}</td>
+                      <td colSpan={4} className={styles.notApplicable}>
+                        Não se aplica
+                      </td>
+                    </tr>
+                  );
+                }
+
+                // Especificações dinâmicas
+                let specs = '';
+                if ('soquete' in item) specs += `Soquete: ${item.soquete}`;
+                if ('memoriaVram' in item) specs += `${item.memoriaVram}GB VRAM`;
+                if ('capacidadeGb' in item && 'tipo' in item) specs += `${item.capacidadeGb}GB ${item.tipo}`;
+                if ('frequenciaMhz' in item) specs += ` @ ${item.frequenciaMhz}MHz`;
+                if ('potenciaWatts' in item) specs += `${item.potenciaWatts}W`;
+                if ('formatosPlacaMaeSuportados' in item) specs += `Suporta: ${item.formatosPlacaMaeSuportados}`;
+
+                return (
+                  <tr key={index}>
+                    <td className={styles.typeCell}>{comp.tipo}</td>
+                    <td className={styles.nameCell}>{item.nome}</td>
+                    <td>{item.marca}</td>
+                    <td className={styles.specsCell}>{specs || '—'}</td>
+                    <td className={styles.priceCell}>
+                      R$ {item.preco.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
+            <tfoot>
+              <tr className={styles.totalRow}>
+                <td colSpan={4} className={styles.totalLabel}>
+                  Preço Total
+                </td>
+                <td className={styles.totalPrice}>
+                  R$ {totalPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                </td>
+              </tr>
+            </tfoot>
           </table>
         </div>
 
-        <div className={styles.totalRow}>
-          <span className={styles.totalLabel}>Total da Build:</span>
-          <span className={styles.totalValue}>R$ {totalPrice.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</span>
+        {/* Seção de ações */}
+        <div className={styles.actionsSection}>
+          <h3>Salvar e Exportar Build</h3>
+
+          {isLoggedIn ? (
+            <div className={styles.loggedInActions}>
+              <p className={styles.userInfo}>
+                Logado como: <strong>{user?.name}</strong> ({user?.email})
+              </p>
+
+              <div className={styles.buttonGrid}>
+                <button
+                  className={styles.saveButton}
+                  onClick={handleSaveBuild}
+                  disabled={loading}
+                >
+                  {loading ? '⏳ Salvando...' : '💾 Salvar Build'}
+                </button>
+
+                <button className={styles.exportButton} onClick={handleExportJSON}>
+                  📄 Exportar JSON
+                </button>
+
+                <button
+                  className={styles.secondaryButton}
+                  onClick={() => navigate('/questionario')}
+                >
+                  🔄 Refazer Questionário
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className={styles.notLoggedIn}>
+              <p className={styles.loginPrompt}>
+                🔒 Faça login ou registro para usar as funcionalidades de <strong>Salvar</strong> e <strong>Exportar Build</strong>
+              </p>
+
+              <div className={styles.buttonGrid}>
+                <button className={styles.loginButton} onClick={() => navigate('/login')}>
+                  🔑 Fazer Login
+                </button>
+
+                <button className={styles.registerButton} onClick={() => navigate('/register')}>
+                  ✍️ Criar Conta
+                </button>
+
+                <button
+                  className={styles.secondaryButton}
+                  onClick={() => navigate('/questionario')}
+                >
+                  🔄 Refazer Questionário
+                </button>
+              </div>
+            </div>
+          )}
         </div>
-      </div>
-
-      <div className={styles.actions}>
-        <button className={styles.backButton} onClick={() => navigate('/recomendacao')}>
-          ← Voltar
-        </button>
-      </div>
-
-      <div className={styles.footer}>
-        <p>Faça login para salvar esta build e acessá-la posteriormente</p>
-        <button className={styles.loginButton} onClick={() => navigate('/login')}>
-          Fazer login
-        </button>
       </div>
     </div>
   );

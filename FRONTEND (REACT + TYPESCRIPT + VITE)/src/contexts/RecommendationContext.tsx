@@ -8,15 +8,20 @@ interface RecommendationContextType {
   questionnaireData: {
     usage: string;
     budget: string;
+    detail: string;  // ✅ ADICIONAR ESTA LINHA
   } | null;
-  setQuestionnaireData: (data: { usage: string; budget: string } | null) => void;
+  setQuestionnaireData: (data: { usage: string; budget: string; detail: string } | null) => void;
 }
 
 const RecommendationContext = createContext<RecommendationContextType | undefined>(undefined);
 
 export const RecommendationProvider = ({ children }: { children: ReactNode }) => {
   const [recommendation, setRecommendation] = useState<RecommendationResponse | null>(null);
-  const [questionnaireData, setQuestionnaireData] = useState<{ usage: string; budget: string } | null>(null);
+  const [questionnaireData, setQuestionnaireData] = useState<{ 
+    usage: string; 
+    budget: string;
+    detail: string;  // ✅ ADICIONAR ESTA LINHA
+  } | null>(null);
 
   return (
     <RecommendationContext.Provider 
