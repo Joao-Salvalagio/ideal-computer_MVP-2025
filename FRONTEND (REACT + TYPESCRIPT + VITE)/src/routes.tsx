@@ -10,6 +10,9 @@ import Questionario from './pages/Questionario';
 import Recomendacao from './pages/Recomendacao';
 import DetalhesComponentes from './pages/DetalhesComponentes';
 
+// ✅ NOVA PÁGINA: Minhas Builds
+import MinhasBuilds from './pages/MinhaBuilds';
+
 // Páginas Admin
 import Admin from './pages/Admin';
 import GerenciarUsuarios from './pages/GerenciarUsuarios';
@@ -37,6 +40,18 @@ const AppRoutes = () => (
       <Route path="/questionario" element={<Questionario />} />
       <Route path="/recomendacao" element={<Recomendacao />} />
       <Route path="/detalhes-componentes" element={<DetalhesComponentes />} />
+      
+      {/* ========================================
+          ✅ NOVA ROTA PROTEGIDA: MINHAS BUILDS
+      ======================================== */}
+      <Route 
+        path="/minhas-builds" 
+        element={
+          <ProtectedRoute requireAdmin={false}>
+            <MinhasBuilds />
+          </ProtectedRoute>
+        } 
+      />
       
       {/* ========================================
           ROTAS PROTEGIDAS - ADMIN DASHBOARD

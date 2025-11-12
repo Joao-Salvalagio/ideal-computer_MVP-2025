@@ -17,7 +17,6 @@ const Navbar = () => {
     <nav className={styles.navbar}>
       <div className={styles.navContent}>
         <Link to="/" className={styles.logo}>
-          {/* Ícone de CPU SVG */}
           <svg 
             width="28" 
             height="28" 
@@ -27,19 +26,15 @@ const Navbar = () => {
             className={styles.logoIcon}
           >
             <rect x="7" y="7" width="10" height="10" rx="1" stroke="currentColor" strokeWidth="2" fill="none"/>
-            {/* Pinos laterais esquerda */}
             <line x1="4" y1="9" x2="7" y2="9" stroke="currentColor" strokeWidth="2"/>
             <line x1="4" y1="12" x2="7" y2="12" stroke="currentColor" strokeWidth="2"/>
             <line x1="4" y1="15" x2="7" y2="15" stroke="currentColor" strokeWidth="2"/>
-            {/* Pinos laterais direita */}
             <line x1="17" y1="9" x2="20" y2="9" stroke="currentColor" strokeWidth="2"/>
             <line x1="17" y1="12" x2="20" y2="12" stroke="currentColor" strokeWidth="2"/>
             <line x1="17" y1="15" x2="20" y2="15" stroke="currentColor" strokeWidth="2"/>
-            {/* Pinos topo */}
             <line x1="9" y1="4" x2="9" y2="7" stroke="currentColor" strokeWidth="2"/>
             <line x1="12" y1="4" x2="12" y2="7" stroke="currentColor" strokeWidth="2"/>
             <line x1="15" y1="4" x2="15" y2="7" stroke="currentColor" strokeWidth="2"/>
-            {/* Pinos base */}
             <line x1="9" y1="17" x2="9" y2="20" stroke="currentColor" strokeWidth="2"/>
             <line x1="12" y1="17" x2="12" y2="20" stroke="currentColor" strokeWidth="2"/>
             <line x1="15" y1="17" x2="15" y2="20" stroke="currentColor" strokeWidth="2"/>
@@ -50,6 +45,14 @@ const Navbar = () => {
         <div className={styles.navLinks}>
           <Link to="/" className={styles.navLink}>Início</Link>
           <Link to="/questionario" className={styles.navLink}>Montar PC</Link>
+          
+          {/* ✅ NOVO LINK: Minhas Builds (só aparece se estiver logado) */}
+          {isLoggedIn && (
+            <Link to="/minhas-builds" className={styles.navLink}>
+              💾 Minhas Builds
+            </Link>
+          )}
+          
           {isAdmin && (
             <Link to="/admin" className={styles.navLink}>
               🔐 Admin
